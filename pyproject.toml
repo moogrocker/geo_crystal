@@ -16,4 +16,6 @@ dependencies = [
     "newspaper3k>=0.2.8",
     "openai>=2.7.2",
     "anthropic>=0.72.1",
+    "plotly>=6.4.0",
+    "pandas>=2.3.3",
 ]
