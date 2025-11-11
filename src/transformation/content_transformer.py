@@ -37,6 +37,28 @@ class ContentTransformer:
             - statistics: List of generated statistics with sources
             - insertion_points: List of where statistics were inserted
         """
+        # Validate topic before proceeding
+        if not topic or not isinstance(topic, str) or len(topic.strip()) < 3:
+            logger.warning(f"Invalid topic provided for statistics generation: '{topic}'")
+            return {
+                "transformed_content": content,
+                "statistics": [],
+                "insertion_points": [],
+                "error": f"Invalid topic: '{topic}'. Cannot generate statistics.",
+            }
+        
+        topic = topic.strip()
+        # Check for placeholder/error messages
+        invalid_patterns = ["unknown topic", "content extraction incomplete", "failed to extract"]
+        if any(pattern in topic.lower() for pattern in invalid_patterns):
+            logger.warning(f"Topic appears to be a placeholder/error message: '{topic}'")
+            return {
+                "transformed_content": content,
+                "statistics": [],
+                "insertion_points": [],
+                "error": f"Topic extraction failed: '{topic}'. Cannot generate statistics.",
+            }
+        
         num_statistics = max(5, min(7, num_statistics))  # Clamp to 5-7
 
         system_prompt = """You are an expert content writer specializing in data-driven articles.
@@ -195,6 +217,30 @@ Return format:
             - citations: List of citations with HTML markup
             - schema_markup: Citation schema markup
         """
+        # Validate topic before proceeding
+        if not topic or not isinstance(topic, str) or len(topic.strip()) < 3:
+            logger.warning(f"Invalid topic provided for citations generation: '{topic}'")
+            return {
+                "transformed_content": content,
+                "citations": [],
+                "citations_html": "",
+                "schema_markup": "",
+                "error": f"Invalid topic: '{topic}'. Cannot generate citations.",
+            }
+        
+        topic = topic.strip()
+        # Check for placeholder/error messages
+        invalid_patterns = ["unknown topic", "content extraction incomplete", "failed to extract"]
+        if any(pattern in topic.lower() for pattern in invalid_patterns):
+            logger.warning(f"Topic appears to be a placeholder/error message: '{topic}'")
+            return {
+                "transformed_content": content,
+                "citations": [],
+                "citations_html": "",
+                "schema_markup": "",
+                "error": f"Topic extraction failed: '{topic}'. Cannot generate citations.",
+            }
+        
         num_citations = max(3, min(5, num_citations))  # Clamp to 3-5
 
         system_prompt = """You are an expert researcher specializing in finding authoritative sources.
@@ -386,6 +432,30 @@ Return format:
             - quotes: List of quotes with attribution
             - schema_markup: Quote schema markup
         """
+        # Validate topic before proceeding
+        if not topic or not isinstance(topic, str) or len(topic.strip()) < 3:
+            logger.warning(f"Invalid topic provided for quotes generation: '{topic}'")
+            return {
+                "transformed_content": content,
+                "quotes": [],
+                "quotes_html": "",
+                "schema_markup": "",
+                "error": f"Invalid topic: '{topic}'. Cannot generate quotes.",
+            }
+        
+        topic = topic.strip()
+        # Check for placeholder/error messages
+        invalid_patterns = ["unknown topic", "content extraction incomplete", "failed to extract"]
+        if any(pattern in topic.lower() for pattern in invalid_patterns):
+            logger.warning(f"Topic appears to be a placeholder/error message: '{topic}'")
+            return {
+                "transformed_content": content,
+                "quotes": [],
+                "quotes_html": "",
+                "schema_markup": "",
+                "error": f"Topic extraction failed: '{topic}'. Cannot generate quotes.",
+            }
+        
         num_quotes = max(3, min(4, num_quotes))  # Clamp to 3-4
 
         system_prompt = """You are an expert content writer specializing in authoritative content.

@@ -1,6 +1,8 @@
 """GEO optimizer that orchestrates content transformations and calculates scores."""
 
+import re
 from typing import Any, Dict, List, Optional
+from urllib.parse import urlparse
 
 from src.analysis.gap_analyzer import GapAnalyzer, GapAnalysisResult
 from src.audit.content_analyzer import ContentAnalyzer
@@ -90,6 +92,33 @@ class GEOOptimizer:
 
         # Extract topic/main question from content
         topic = self._extract_topic(parsed_data)
+        
+        # Validate topic before proceeding with transformations
+        if not self._validate_topic(topic):
+            logger.warning(
+                f"Topic extraction failed or produced invalid topic: '{topic}'. "
+                "Skipping AI-powered transformations to avoid generating incorrect content."
+            )
+            # Return original content without transformations
+            return {
+                "original_score": original_score,
+                "optimized_score": original_score,
+                "score_improvement": 0,
+                "transformations_applied": [],
+                "transformed_content": original_content,
+                "transformed_html": original_html,
+                "schema_markup": "",
+                "before_after_comparison": self._generate_comparison(
+                    original_score_result,
+                    original_score_result,
+                    original_content_analysis,
+                    original_content_analysis,
+                ),
+                "usage_stats": self.ai_client.get_usage_stats(),
+                "gap_analysis": gap_analysis.dict() if gap_analysis else None,
+                "error": f"Topic extraction failed: '{topic}'. Cannot safely generate content transformations.",
+            }
+        
         main_question = self._extract_main_question(parsed_data, topic)
 
         # Apply transformations based on gap analysis
@@ -263,30 +292,182 @@ class GEOOptimizer:
 
     def _extract_topic(self, parsed_data: Dict[str, Any]) -> str:
         """
-        Extract main topic from parsed data.
+        Extract main topic from parsed data with multiple fallback strategies.
+        Never returns "Unknown Topic" - always extracts something meaningful.
 
         Args:
             parsed_data: Parsed data from crawler
 
         Returns:
-            Main topic string
+            Main topic string (never "Unknown Topic")
         """
-        # Try to get from meta tags
+        # Strategy 1: Try to get from meta tags (title, og:title, etc.)
         meta_tags = parsed_data.get("meta_tags", {})
-        if meta_tags.get("title"):
-            return meta_tags["title"]
+        if meta_tags.get("title") and meta_tags["title"].strip():
+            title = meta_tags["title"].strip()
+            if len(title) > 3:  # Ensure it's meaningful
+                return title
+        
+        # Try og:title or twitter:title
+        for key in ["og:title", "twitter:title"]:
+            if meta_tags.get(key) and meta_tags[key].strip():
+                title = meta_tags[key].strip()
+                if len(title) > 3:
+                    return title
 
-        # Try to get from first heading
+        # Strategy 2: Try to get from first heading (h1 preferred, then h2, etc.)
         headings = parsed_data.get("headings", [])
         if headings:
-            return headings[0].get("text", "")
+            # Prefer h1, then h2, etc.
+            for heading in headings:
+                text = heading.get("text", "").strip()
+                if text and len(text) > 3:
+                    return text
 
-        # Fallback to first sentence
+        # Strategy 3: Extract from text content (first meaningful sentence/paragraph)
         text_content = parsed_data.get("text_content", "")
         if text_content:
-            return text_content.split(".")[0][:100]
+            # Clean up whitespace
+            text_content = re.sub(r'\s+', ' ', text_content).strip()
+            
+            # Try to get first sentence
+            sentences = re.split(r'[.!?]\s+', text_content)
+            for sentence in sentences:
+                sentence = sentence.strip()
+                # Skip very short sentences or common navigation text
+                if len(sentence) > 20 and not any(
+                    skip in sentence.lower() 
+                    for skip in ["cookie", "accept", "menu", "navigation", "skip to"]
+                ):
+                    # Limit length but keep meaningful content
+                    if len(sentence) > 150:
+                        return sentence[:150] + "..."
+                    return sentence
+            
+            # If no good sentence, get first meaningful chunk
+            if len(text_content) > 20:
+                # Get first 200 chars, but try to end at word boundary
+                chunk = text_content[:200]
+                last_space = chunk.rfind(' ')
+                if last_space > 100:
+                    chunk = chunk[:last_space]
+                return chunk.strip()
 
-        return "Unknown Topic"
+        # Strategy 4: Extract from URL/domain
+        url = parsed_data.get("url", "")
+        if url:
+            topic_from_url = self._extract_topic_from_url(url)
+            if topic_from_url:
+                return topic_from_url
+
+        # Strategy 5: Use meta description if available
+        description = meta_tags.get("description") or meta_tags.get("og:description")
+        if description and description.strip():
+            desc = description.strip()
+            if len(desc) > 10:
+                # Use first sentence or first 100 chars
+                first_sentence = desc.split('.')[0]
+                if len(first_sentence) > 10:
+                    return first_sentence[:150]
+                return desc[:150]
+
+        # Last resort: Return a generic message indicating content extraction issue
+        # This is better than "Unknown Topic" which triggers AI hallucinations
+        return "Content extraction incomplete - page content not fully accessible"
+
+    def _extract_topic_from_url(self, url: str) -> Optional[str]:
+        """
+        Extract topic from URL or domain name as fallback.
+
+        Args:
+            url: URL to extract topic from
+
+        Returns:
+            Topic string extracted from URL, or None if not possible
+        """
+        try:
+            parsed = urlparse(url)
+            domain = parsed.netloc.lower()
+            path = parsed.path.lower()
+            
+            # Remove www prefix
+            domain = re.sub(r'^www\.', '', domain)
+            
+            # Remove common TLDs (including country codes)
+            # Match TLDs at the end: .com, .org, .io, .co.uk, .fr, etc.
+            domain = re.sub(r'\.[a-z]{2,4}(?:\.[a-z]{2})?$', '', domain, flags=re.IGNORECASE)
+            
+            # Extract meaningful parts from domain
+            domain_parts = re.split(r'[.\-_]', domain)
+            meaningful_parts = [p for p in domain_parts if len(p) > 2 and p not in ['www', 'http', 'https']]
+            
+            if meaningful_parts:
+                # Capitalize and join
+                topic = ' '.join(word.capitalize() for word in meaningful_parts)
+                return topic
+            
+            # Try to extract from path
+            if path and path != '/':
+                path_parts = [p for p in path.split('/') if p and len(p) > 2]
+                if path_parts:
+                    # Use last meaningful path segment
+                    last_part = path_parts[-1]
+                    # Clean up common URL patterns
+                    last_part = re.sub(r'[.\-_]', ' ', last_part)
+                    last_part = re.sub(r'\d+', '', last_part)  # Remove numbers
+                    if last_part.strip():
+                        return last_part.strip().title()
+            
+            return None
+        except Exception as e:
+            logger.warning(f"Failed to extract topic from URL {url}: {e}")
+            return None
+
+    def _validate_topic(self, topic: str) -> bool:
+        """
+        Validate that a topic is meaningful and safe to use for content generation.
+
+        Args:
+            topic: Topic string to validate
+
+        Returns:
+            True if topic is valid, False otherwise
+        """
+        if not topic or not isinstance(topic, str):
+            return False
+        
+        topic = topic.strip()
+        
+        # Reject placeholder/error messages
+        invalid_patterns = [
+            r"unknown\s+topic",
+            r"content\s+extraction\s+incomplete",
+            r"failed\s+to\s+extract",
+            r"error",
+            r"n/a",
+            r"none",
+            r"null",
+            r"undefined",
+        ]
+        
+        topic_lower = topic.lower()
+        for pattern in invalid_patterns:
+            if re.search(pattern, topic_lower):
+                return False
+        
+        # Must have minimum length
+        if len(topic) < 3:
+            return False
+        
+        # Must contain at least one letter (not just numbers/symbols)
+        if not re.search(r'[a-zA-Z]', topic):
+            return False
+        
+        # Should not be just whitespace or special characters
+        if not re.search(r'[a-zA-Z0-9]', topic):
+            return False
+        
+        return True
 
     def _extract_main_question(self, parsed_data: Dict[str, Any], topic: str) -> str:
         """
