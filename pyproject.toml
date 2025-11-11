@@ -1,0 +1,19 @@
+[project]
+name = "geo-crystal"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "streamlit>=1.51.0",
+    "pydantic>=2.0.0",
+    "python-dotenv>=1.0.0",
+    "requests>=2.31.0",
+    "beautifulsoup4>=4.12.0",
+    "requests-html>=0.10.0",
+    "readability>=0.3.2",
+    "textstat>=0.7.11",
+    "newspaper3k>=0.2.8",
+    "openai>=2.7.2",
+    "anthropic>=0.72.1",
+]
