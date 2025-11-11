@@ -22,3 +22,6 @@ data/*.json
 *.swp
 *.swo
 *~
+
+# Streamlit pages
+pages/2_transform.py

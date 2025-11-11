@@ -1,0 +1,153 @@
+{
+  "url": "https://www.agora.software/fr/",
+  "audit_date": "2025-11-12T00:52:56.498197",
+  "geo_score": {
+    "total_score": 3.0,
+    "breakdown": {
+      "answer_first": 0.0,
+      "fact_density": 0.0,
+      "citations": 0.0,
+      "structure": 0.0,
+      "schema": 0,
+      "readability": 0.0,
+      "uniqueness": 3
+    }
+  },
+  "recommendations": [
+    "Optimize first paragraph to be 40-60 words and directly answer the main question",
+    "Add more statistics, numbers, and expert quotes to increase fact density",
+    "Add external links and citations to authoritative sources to improve credibility",
+    "Improve heading hierarchy: ensure single H1 tag and proper H2-H6 structure",
+    "Add structured data (JSON-LD) markup for Article, FAQPage, or other relevant schema types",
+    "Improve readability: aim for Flesch Reading Ease score between 60-80",
+    "Expand content length and ensure unique, original content (aim for 500+ words)"
+  ],
+  "parsed_data": {
+    "text_content": "",
+    "headings": [],
+    "meta_tags": {},
+    "links": [],
+    "images": [],
+    "schema_markup": [],
+    "microdata": [],
+    "html": "<html url=\"https://www.agora.software/fr/\"></html>"
+  },
+  "content_analysis": {
+    "first_paragraph_analysis": {
+      "first_paragraph": "",
+      "word_count": 0,
+      "meets_length": false,
+      "score": 0
+    },
+    "statistics_analysis": {
+      "number_count": 0,
+      "percentage_count": 0,
+      "statistic_phrases": 0,
+      "total_statistics": 0,
+      "score": 0
+    },
+    "citations_analysis": {
+      "external_link_count": 0,
+      "citation_patterns": 0,
+      "has_citations": false,
+      "total_citations": 0,
+      "score": 0
+    },
+    "expert_quotes_analysis": {
+      "quote_count": 0,
+      "expert_indicators": 0,
+      "total_expert_indicators": 0,
+      "score": 0
+    },
+    "readability_analysis": {
+      "flesch_score": 0,
+      "reading_level": "Unknown",
+      "score": 0
+    },
+    "content_score": 0.0
+  },
+  "technical_analysis": {
+    "schema_analysis": {
+      "has_schema": false,
+      "schema_types": [],
+      "valid_types": [],
+      "invalid_types": [],
+      "schema_count": 0
+    },
+    "headings_analysis": {
+      "has_h1": false,
+      "h1_count": 0,
+      "heading_hierarchy": {},
+      "structure_score": 0
+    },
+    "cwv_analysis": {
+      "has_viewport": false,
+      "has_preload": false,
+      "has_defer": false,
+      "image_count": 0,
+      "has_lazy_loading": false,
+      "cwv_score": 15
+    },
+    "technical_score": 3.75
+  },
+  "findings": {
+    "content_analysis": {
+      "first_paragraph_analysis": {
+        "first_paragraph": "",
+        "word_count": 0,
+        "meets_length": false,
+        "score": 0
+      },
+      "statistics_analysis": {
+        "number_count": 0,
+        "percentage_count": 0,
+        "statistic_phrases": 0,
+        "total_statistics": 0,
+        "score": 0
+      },
+      "citations_analysis": {
+        "external_link_count": 0,
+        "citation_patterns": 0,
+        "has_citations": false,
+        "total_citations": 0,
+        "score": 0
+      },
+      "expert_quotes_analysis": {
+        "quote_count": 0,
+        "expert_indicators": 0,
+        "total_expert_indicators": 0,
+        "score": 0
+      },
+      "readability_analysis": {
+        "flesch_score": 0,
+        "reading_level": "Unknown",
+        "score": 0
+      },
+      "content_score": 0.0
+    },
+    "technical_analysis": {
+      "schema_analysis": {
+        "has_schema": false,
+        "schema_types": [],
+        "valid_types": [],
+        "invalid_types": [],
+        "schema_count": 0
+      },
+      "headings_analysis": {
+        "has_h1": false,
+        "h1_count": 0,
+        "heading_hierarchy": {},
+        "structure_score": 0
+      },
+      "cwv_analysis": {
+        "has_viewport": false,
+        "has_preload": false,
+        "has_defer": false,
+        "image_count": 0,
+        "has_lazy_loading": false,
+        "cwv_score": 15
+      },
+      "technical_score": 3.75
+    }
+  }
+}
