@@ -77,7 +77,7 @@ def transform_content(
     transformation_options: Dict[str, bool]
 ) -> Dict[str, Any]:
     """
-    Transform content based on selected options.
+    Transform content based on selected options using GEOOptimizer.
     
     Args:
         parsed_data: Parsed data from crawler
@@ -85,7 +85,7 @@ def transform_content(
             - add_statistics: Add statistics
             - add_citations: Add citations
             - add_expert_quotes: Add expert quotes
-            - optimize_structure: Optimize structure
+            - optimize_structure: Optimize structure (opening paragraph)
             - generate_schema: Generate schema markup
             
     Returns:
@@ -95,8 +95,9 @@ def transform_content(
         - original_score: Original GEO score
         - transformed_score: Transformed GEO score
         - transformations_applied: List of applied transformations
+        - score_improvement: Score improvement
     """
-    # Run original audit to get baseline score
+    # Get original score
     content_analyzer = ContentAnalyzer()
     technical_analyzer = TechnicalAnalyzer()
     geo_scorer = GEOScorer()
@@ -109,38 +110,59 @@ def transform_content(
         parsed_data
     )
     original_score = original_score_result["total_score"]
+    original_content = parsed_data.get("text_content", "")
     
-    # Apply transformations
-    # Note: This is a simplified version - in production, you'd use the optimizer
-    # with specific transformation options
-    transformed_data = parsed_data.copy()
+    # Use GEOOptimizer for transformations
+    # If apply_all is True, it will apply all transformations
+    # Otherwise, we need to check which ones are selected
+    apply_all = all(transformation_options.values())
+    
+    # If specific options are selected, we'll use apply_all but filter results
+    # For MVP, we'll use apply_all when any option is selected
+    if not any(transformation_options.values()):
+        # No transformations selected, return original
+        return {
+            "original_content": original_content,
+            "transformed_content": original_content,
+            "original_score": original_score,
+            "transformed_score": original_score,
+            "transformations_applied": [],
+            "score_improvement": 0
+        }
+    
+    # Run optimization
+    optimizer = GEOOptimizer()
+    optimization_result = optimizer.optimize(
+        parsed_data=parsed_data,
+        apply_all=apply_all
+    )
+    
+    # Extract transformation types applied
     transformations_applied = []
+    for trans in optimization_result.get("transformations_applied", []):
+        trans_type = trans.get("type", "unknown")
+        if trans_type == "opening":
+            transformations_applied.append("Opening paragraph optimized")
+        elif trans_type == "statistics":
+            transformations_applied.append("Statistics added")
+        elif trans_type == "citations":
+            transformations_applied.append("Citations added")
+        elif trans_type == "quotes":
+            transformations_applied.append("Expert quotes added")
     
-    # For MVP, we'll simulate transformations
-    # In production, this would call the actual transformation methods
-    if transformation_options.get("optimize_structure"):
-        transformations_applied.append("Structure optimized")
-    
-    if transformation_options.get("generate_schema"):
+    # Add schema if requested
+    if transformation_options.get("generate_schema") and optimization_result.get("schema_markup"):
         transformations_applied.append("Schema markup generated")
     
-    # Recalculate score after transformation
-    transformed_content_analysis = content_analyzer.analyze(transformed_data)
-    transformed_technical_analysis = technical_analyzer.analyze(transformed_data)
-    transformed_score_result = geo_scorer.score(
-        transformed_content_analysis,
-        transformed_technical_analysis,
-        transformed_data
-    )
-    transformed_score = transformed_score_result["total_score"]
-    
     return {
-        "original_content": parsed_data.get("text_content", ""),
-        "transformed_content": transformed_data.get("text_content", ""),
+        "original_content": original_content,
+        "transformed_content": optimization_result.get("transformed_content", original_content),
         "original_score": original_score,
-        "transformed_score": transformed_score,
+        "transformed_score": optimization_result.get("optimized_score", original_score),
         "transformations_applied": transformations_applied,
-        "score_improvement": transformed_score - original_score
+        "score_improvement": optimization_result.get("score_improvement", 0),
+        "schema_markup": optimization_result.get("schema_markup", ""),
+        "usage_stats": optimization_result.get("usage_stats", {})
     }
 
 

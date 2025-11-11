@@ -1,0 +1,87 @@
+{
+  "url": "https://example.com/guide/climate-change-solutions",
+  "audit_date": "2025-11-10T00:25:24.498049",
+  "geo_score": {
+    "total_score": 51,
+    "breakdown": {
+      "first_paragraph_score": 61,
+      "statistics_score": 45,
+      "citations_score": 60,
+      "expert_quotes_score": 49,
+      "readability_score": 58,
+      "headings_structure_score": 52,
+      "schema_score": 47
+    }
+  },
+  "recommendations": [
+    "Add more statistics and data points to improve fact density",
+    "Include expert quotes from industry leaders",
+    "Add external citations to authoritative sources",
+    "Optimize the first paragraph to directly answer the main question",
+    "Generate structured data (JSON-LD) schema markup"
+  ],
+  "parsed_data": {
+    "url": "https://example.com/guide/climate-change-solutions",
+    "title": "Climate Change Solutions: What Works",
+    "text_content": "Climate Change Solutions: What Works\n\nEvidence-based approaches to combat climate change\n\nThis is a sample article about climate change solutions: what works. It contains some basic information but could benefit from additional statistics, citations, and expert quotes to improve its GEO score.",
+    "headings": [
+      {
+        "level": 1,
+        "text": "Climate Change Solutions: What Works"
+      },
+      {
+        "level": 2,
+        "text": "Introduction"
+      },
+      {
+        "level": 2,
+        "text": "Key Points"
+      },
+      {
+        "level": 2,
+        "text": "Conclusion"
+      }
+    ],
+    "meta_tags": {
+      "title": "Climate Change Solutions: What Works",
+      "description": "Evidence-based approaches to combat climate change"
+    }
+  },
+  "content_analysis": {
+    "first_paragraph_analysis": {
+      "word_count": 38,
+      "meets_length": false,
+      "score": 65
+    },
+    "statistics_analysis": {
+      "statistics_count": 1,
+      "score": 45
+    },
+    "citations_analysis": {
+      "external_links_count": 2,
+      "score": 36
+    },
+    "expert_quotes_analysis": {
+      "quotes_count": 0,
+      "score": 31
+    },
+    "readability_analysis": {
+      "flesch_reading_ease": 51,
+      "score": 48
+    }
+  },
+  "technical_analysis": {
+    "headings_analysis": {
+      "h1_count": 1,
+      "total_headings": 4,
+      "structure_score": 55
+    },
+    "schema_analysis": {
+      "has_schema": true,
+      "schema_types": [
+        "Article"
+      ],
+      "valid_types": []
+    }
+  }
+}

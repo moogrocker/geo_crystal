@@ -1,0 +1,85 @@
+{
+  "url": "https://example.com/blog/how-to-start-a-business",
+  "audit_date": "2025-11-10T00:25:24.497308",
+  "geo_score": {
+    "total_score": 58,
+    "breakdown": {
+      "first_paragraph_score": 53,
+      "statistics_score": 46,
+      "citations_score": 56,
+      "expert_quotes_score": 63,
+      "readability_score": 68,
+      "headings_structure_score": 53,
+      "schema_score": 30
+    }
+  },
+  "recommendations": [
+    "Add more statistics and data points to improve fact density",
+    "Include expert quotes from industry leaders",
+    "Add external citations to authoritative sources",
+    "Optimize the first paragraph to directly answer the main question",
+    "Generate structured data (JSON-LD) schema markup"
+  ],
+  "parsed_data": {
+    "url": "https://example.com/blog/how-to-start-a-business",
+    "title": "How to Start a Business in 2024",
+    "text_content": "How to Start a Business in 2024\n\nStep-by-step guide for entrepreneurs\n\nThis is a sample article about how to start a business in 2024. It contains some basic information but could benefit from additional statistics, citations, and expert quotes to improve its GEO score.",
+    "headings": [
+      {
+        "level": 1,
+        "text": "How to Start a Business in 2024"
+      },
+      {
+        "level": 2,
+        "text": "Introduction"
+      },
+      {
+        "level": 2,
+        "text": "Key Points"
+      },
+      {
+        "level": 2,
+        "text": "Conclusion"
+      }
+    ],
+    "meta_tags": {
+      "title": "How to Start a Business in 2024",
+      "description": "Step-by-step guide for entrepreneurs"
+    }
+  },
+  "content_analysis": {
+    "first_paragraph_analysis": {
+      "word_count": 74,
+      "meets_length": false,
+      "score": 73
+    },
+    "statistics_analysis": {
+      "statistics_count": 1,
+      "score": 38
+    },
+    "citations_analysis": {
+      "external_links_count": 0,
+      "score": 38
+    },
+    "expert_quotes_analysis": {
+      "quotes_count": 0,
+      "score": 41
+    },
+    "readability_analysis": {
+      "flesch_reading_ease": 67,
+      "score": 53
+    }
+  },
+  "technical_analysis": {
+    "headings_analysis": {
+      "h1_count": 1,
+      "total_headings": 4,
+      "structure_score": 58
+    },
+    "schema_analysis": {
+      "has_schema": true,
+      "schema_types": [],
+      "valid_types": []
+    }
+  }
+}

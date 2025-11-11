@@ -9,6 +9,7 @@ import streamlit as st
 from streamlit_helpers import load_audit_history, run_geo_audit, save_audit_result
 from components.geo_score_card import render_score_card
 from components.recommendations_list import render_recommendations
+from demo_data import SAMPLE_URLS, get_demo_audit_by_url, is_demo_mode
 
 
 def render():
@@ -34,9 +35,20 @@ def render():
     
     with col2:
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("📋 Sample URL", use_container_width=True):
-            st.session_state.sample_url = "https://example.com/article"
+        if st.button("📋 Sample URLs", use_container_width=True):
+            st.session_state.show_samples = True
             st.rerun()
+    
+    # Show sample URLs
+    if st.session_state.get("show_samples", False):
+        st.markdown("### 📋 Sample URLs (Demo Mode)")
+        cols = st.columns(len(SAMPLE_URLS))
+        for i, sample in enumerate(SAMPLE_URLS):
+            with cols[i]:
+                if st.button(f"Use: {sample['title'][:30]}...", key=f"sample_{i}", use_container_width=True):
+                    st.session_state.sample_url = sample["url"]
+                    st.session_state.show_samples = False
+                    st.rerun()
     
     # Use sample URL if set
     if "sample_url" in st.session_state:
@@ -48,19 +60,36 @@ def render():
         if not url:
             st.error("Please enter a URL")
         else:
-            with st.spinner("Analyzing content... This may take a few moments."):
-                try:
-                    audit_result = run_geo_audit(url)
-                    st.session_state.audit_results = audit_result
-                    st.session_state.audit_error = None
-                    
-                    # Save audit result
-                    save_audit_result(audit_result)
-                    st.success("Audit completed successfully!")
-                except Exception as e:
-                    st.session_state.audit_error = str(e)
-                    st.session_state.audit_results = None
-                    st.error(f"Error running audit: {str(e)}")
+            # Check if demo mode or sample URL
+            use_demo = is_demo_mode() or any(sample["url"] == url for sample in SAMPLE_URLS)
+            
+            if use_demo:
+                # Use demo data for instant results
+                with st.spinner("Loading demo results..."):
+                    try:
+                        audit_result = get_demo_audit_by_url(url)
+                        st.session_state.audit_results = audit_result
+                        st.session_state.audit_error = None
+                        st.success("Demo audit completed! (Using sample data)")
+                    except Exception as e:
+                        st.session_state.audit_error = str(e)
+                        st.session_state.audit_results = None
+                        st.error(f"Error loading demo: {str(e)}")
+            else:
+                # Run real audit
+                with st.spinner("Analyzing content... This may take a few moments."):
+                    try:
+                        audit_result = run_geo_audit(url)
+                        st.session_state.audit_results = audit_result
+                        st.session_state.audit_error = None
+                        
+                        # Save audit result
+                        save_audit_result(audit_result)
+                        st.success("Audit completed successfully!")
+                    except Exception as e:
+                        st.session_state.audit_error = str(e)
+                        st.session_state.audit_results = None
+                        st.error(f"Error running audit: {str(e)}")
     
     # Display results
     if st.session_state.audit_results:

@@ -1,0 +1,31 @@
+# GEO Autopilot MVP - Python Dependencies
+
+# Web Framework
+streamlit>=1.51.0
+
+# Data Validation
+pydantic>=2.0.0
+
+# Environment Configuration
+python-dotenv>=1.0.0
+
+# HTTP Requests & Web Scraping
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+requests-html>=0.10.0
+lxml>=5.0.0
+lxml_html_clean>=0.1.0
+
+# Content Analysis
+readability>=0.3.2
+textstat>=0.7.11
+newspaper3k>=0.2.8
+
+# AI/ML APIs
+openai>=2.7.2
+anthropic>=0.72.1
+
+# Data Visualization
+plotly>=6.4.0
+pandas>=2.3.3
+

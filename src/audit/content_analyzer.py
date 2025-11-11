@@ -195,7 +195,7 @@ class ContentAnalyzer:
         # Count quoted text (text within quotes)
         quote_patterns = [
             r'"[^"]{20,}"',  # Double quotes with substantial content
-            r''[^']{20,}'',  # Single quotes with substantial content
+            r"'[^']{20,}'",  # Single quotes with substantial content
             r'"[^"]{20,}"',  # Smart quotes
         ]
         quote_count = 0
